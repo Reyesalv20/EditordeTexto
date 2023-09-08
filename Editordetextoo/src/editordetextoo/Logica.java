@@ -55,6 +55,18 @@ public class Logica {
         }
     }
 
+    //borra el archivo para poder despues ingresar el texto tras ser modificado en el swing
+    static void deleteFile(String filepath){
+        File file = new File(filepath);
+        if(file.exists()){
+            file.delete();
+        }
+    }
+    
+    static void ingresarInfo (String texto) throws IOException{
+        raf.writeUTF(texto);
+    }
+    
     static Font changeFont(String fuente){
         Font font = new Font(fuente, Font.BOLD, size);
         return font;
