@@ -1,6 +1,5 @@
 package editordetextoo;
 
-
 import java.awt.Font;
 import java.io.File;
 import java.io.IOException;
@@ -10,77 +9,92 @@ import java.io.RandomAccessFile;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author AdminColeexz
  */
 public class Logica {
+
+    /*
+    Formato:
     
-    static RandomAccessFile raf;
-    static String texto,fuente,color;
-    static int size;
+    Horizontal allign: izquierda (0 | default) centro (1) derecha (2)
+    Vertical allign: arriba (0) centro (1 | default) abajo (2)
+    Fuente: NOMBRE DE LA FUENTE (String | default "Calibri")s
+    Color: Guardar RGB (3 int | default 0, 0 , 0)
+    size: int (default | 12)
+    bold: boolean (default | false)
+    italic: boolean (default | false)
+    String text (default | "")
+    EOF
+     */
     
-    static void createUsersFile(String nombre) {
+    static void createTextFile(String path) {
         //crea el directorio en caso de que no exista, y si exista, va de un solo al try catch
-        File directory = new File("Archivos");
-        if (!directory.exists()) {
-            if (directory.mkdir()) {
-                System.out.println("Se creo el directorio: " + directory.getName());
-            } else {
-                System.out.println("Error. No se pudo crear el directorio");
-            }
-        } else {
-            System.out.println("El directorio ya existe");
-        }             
-        
+        File file = new File(path);
         try {
-            //crea el archvio con el nombre que se recibe de parametro
-            raf = new RandomAccessFile("Archivos/"+nombre+".txt", "rw");
-        } catch (IOException e) {
-            System.err.println("Error. No se pudo crear el archivo");
-        }
-    }
-    
-    static void loadTextFromFile(String nombrearchivo) throws IOException{
-        //el puntero se posiciona en la posicion 0
-        raf.seek(0);
-        try{
-            //mientras el puntero no llegue al final del archivo, cada palabra que este en el archivo sera cargada en el acumulador de texto = texto
-            while(raf.getFilePointer()<raf.length()){
-                texto+=raf.readUTF();
-            }
-        } catch (IOException e){
-            System.out.println("no se pudieron cargar los archivos");
+            file.createNewFile();
+
+            System.out.println("[createTextFile] Se creo el directorio: " + file.getName());
+            RandomAccessFile raf = new RandomAccessFile(path, "rw");
+            raf.writeInt(0); // h allign izquierda
+            raf.writeInt(1); // v allign centro
+            raf.writeUTF("Calibri");
+            raf.writeInt(0); // R
+            raf.writeInt(0); // G
+            raf.writeInt(0); // B
+            raf.writeInt(12); // font size
+            raf.writeBoolean(false); // bold
+            raf.writeBoolean(false); // italic
+            raf.writeUTF("");;
+            raf.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    //borra el archivo para poder despues ingresar el texto tras ser modificado en el swing
-    static void deleteFile(String filepath){
-        File file = new File(filepath);
-        if(file.exists()){
-            file.delete();
+    static FileMetadata loadTextDataFromFile(String path) throws IOException {
+        //el puntero se posiciona en la posicion 0
+        try {
+            RandomAccessFile raf = new RandomAccessFile(path, "rw");
+            // Skipear allings
+            int hAllign = raf.readInt();
+            int vAlling= raf.readInt();
+            String fontName = raf.readUTF();
+            int fontR = raf.readInt();
+            int fontG = raf.readInt();
+            int fontB = raf.readInt();
+            int fontSize = raf.readInt();
+            boolean bold = raf.readBoolean();
+            boolean italic = raf.readBoolean();
+            String text = raf.readUTF();
+            File currentFile = new File(path);
+
+            FileMetadata fileData = new FileMetadata(hAllign, vAlling, fontName, fontR, fontG, fontB, fontSize, bold, italic, text, currentFile);
+            return fileData;
+        } catch (IOException e) {
+            System.out.println("no se pudieron cargar los archivos");
         }
+        return null;
     }
-    
-    static void ingresarInfo (String texto) throws IOException{
-        raf.writeUTF(texto);
+
+    static void updateInfo(FileMetadata data) throws IOException {
+        String path = data.currentFile.getCanonicalPath();
+        data.currentFile.delete();
+        
+        RandomAccessFile raf = new RandomAccessFile(path, "rw");
+        
+        raf.writeInt(data.hAllign);
+        raf.writeInt(data.vAllign);
+        raf.writeUTF(data.fontName);
+        raf.writeInt(data.fontR);
+        raf.writeInt(data.fontG);
+        raf.writeInt(data.fontB);
+        raf.writeInt(data.fontSize);
+        raf.writeBoolean(data.bold);
+        raf.writeBoolean(data.italic);
+        raf.writeUTF(data.text);
+        
     }
-    
-    static Font changeFont(String fuente){
-        Font font = new Font(fuente, Font.BOLD, size);
-        return font;
-    }
-    
-    //recibe de parametro el size para cambiarlo en el font
-    public static void setSize(int size) {
-        Logica.size = size;
-    }
-   
-    //
-    static void changeColor(String color){
-        Logica.color = color;
-    }
-    
-    
 }
