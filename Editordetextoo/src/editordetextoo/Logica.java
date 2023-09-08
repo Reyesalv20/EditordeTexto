@@ -64,14 +64,17 @@ public class Logica {
             f.delete();
             System.out.println("Guardando data en " + path);
             RandomAccessFile raf = new RandomAccessFile(path, "rw");
+            raf.seek(0);
             raf.writeInt(data.hAllign);
             raf.writeInt(data.vAllign);
             raf.writeUTF(data.fontName);
             raf.writeInt(data.fontR);
             raf.writeInt(data.fontG);
             raf.writeInt(data.fontB);
+            raf.writeInt(data.fontSize);
             raf.writeBoolean(data.bold);
             raf.writeBoolean(data.italic);
+            System.out.println(data.text);
             raf.writeUTF(data.text);
             raf.close();
             
@@ -108,24 +111,5 @@ public class Logica {
             e.printStackTrace();
         }
         return null;
-    }
-
-    static void updateInfo(FileMetadata data) throws IOException {
-        String path = data.currentFile.getCanonicalPath();
-        data.currentFile.delete();
-        
-        RandomAccessFile raf = new RandomAccessFile(path, "rw");
-        
-        raf.writeInt(data.hAllign);
-        raf.writeInt(data.vAllign);
-        raf.writeUTF(data.fontName);
-        raf.writeInt(data.fontR);
-        raf.writeInt(data.fontG);
-        raf.writeInt(data.fontB);
-        raf.writeInt(data.fontSize);
-        raf.writeBoolean(data.bold);
-        raf.writeBoolean(data.italic);
-        raf.writeUTF(data.text);
-        
     }
 }

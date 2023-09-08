@@ -35,6 +35,22 @@ public class editortexto extends javax.swing.JFrame {
         }
 
         fontCombo.setSelectedItem(data.fontName);
+        
+        int style = Font.PLAIN;
+        if (data.bold == true) {
+            style = Font.BOLD;
+            System.out.println("nueva size | bold");
+        }
+        if (data.italic == true) {
+            System.out.println("nueva size | italic");
+            style = Font.ITALIC;
+        }
+        
+        Font f = new Font(data.fontName, style, data.fontSize);
+        textEditor.setFont(f);
+        sizeCombo.setSelectedItem("" + data.fontSize);
+        textEditor.setText(data.text);
+        
         enabled = true;
     }
 
@@ -341,6 +357,7 @@ public class editortexto extends javax.swing.JFrame {
             data.text = textEditor.getText();
             this.setVisible(false);
             Logica.saveFile(data.currentFile.getCanonicalPath(), data);
+            System.out.println("EDITOR CERRADO ===");
             new menu().setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
