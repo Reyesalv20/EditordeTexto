@@ -8,13 +8,34 @@ package editordetextoo;
  *
  * @author ruthreyes
  */
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+
 public class editortexto extends javax.swing.JFrame {
 
     /**
      * Creates new form editortexto
      */
-    public editortexto() {
+    FileMetadata data;
+    boolean enabled = false;
+
+    public editortexto(FileMetadata data) {
         initComponents();
+
+        this.data = data;
+        Font fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+
+        for (Font f : fonts) {
+            fontCombo.addItem(f.getName());
+        }
+
+        fontCombo.setSelectedItem(data.fontName);
+        enabled = true;
     }
 
     /**
@@ -35,22 +56,19 @@ public class editortexto extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        fontCombo = new javax.swing.JComboBox<>();
+        sizeCombo = new javax.swing.JComboBox<>();
         choosecolor_button = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
+        copyBtn = new javax.swing.JLabel();
+        cutBtn = new javax.swing.JLabel();
+        pasteBtn = new javax.swing.JLabel();
+        boldBtn = new javax.swing.JLabel();
+        italicBtn = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        textEditor = new javax.swing.JTextArea();
         jLabel17 = new javax.swing.JLabel();
         jLabel18 = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
@@ -129,13 +147,22 @@ public class editortexto extends javax.swing.JFrame {
         jLabel5.setForeground(new java.awt.Color(0, 0, 0));
         jLabel5.setText("Color");
 
-        jComboBox1.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox1.setForeground(new java.awt.Color(0, 0, 0));
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        fontCombo.setBackground(new java.awt.Color(255, 255, 255));
+        fontCombo.setForeground(new java.awt.Color(0, 0, 0));
+        fontCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fontComboItemStateChanged(evt);
+            }
+        });
 
-        jComboBox2.setBackground(new java.awt.Color(255, 255, 255));
-        jComboBox2.setForeground(new java.awt.Color(0, 0, 0));
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        sizeCombo.setBackground(new java.awt.Color(255, 255, 255));
+        sizeCombo.setForeground(new java.awt.Color(0, 0, 0));
+        sizeCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "3", "58", "10", "12", "14", "28", "24", "32", "36", "48" }));
+        sizeCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                sizeComboItemStateChanged(evt);
+            }
+        });
 
         choosecolor_button.setForeground(new java.awt.Color(255, 255, 255));
         choosecolor_button.setText("Choose");
@@ -145,21 +172,43 @@ public class editortexto extends javax.swing.JFrame {
             }
         });
 
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/3.png"))); // NOI18N
+        copyBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/3.png"))); // NOI18N
+        copyBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                copyBtnMouseClicked(evt);
+            }
+        });
 
-        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/1.png"))); // NOI18N
+        cutBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/1.png"))); // NOI18N
+        cutBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cutBtnMouseClicked(evt);
+            }
+        });
 
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/2 (1).png"))); // NOI18N
+        pasteBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/2 (1).png"))); // NOI18N
+        pasteBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                pasteBtnMouseClicked(evt);
+            }
+        });
 
-        jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/4.png"))); // NOI18N
+        boldBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/B.png"))); // NOI18N
+        boldBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                boldBtnMouseClicked(evt);
+            }
+        });
 
-        jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/5.png"))); // NOI18N
-
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/B.png"))); // NOI18N
-
-        jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/7.png"))); // NOI18N
-
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/U.png"))); // NOI18N
+        italicBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/7.png"))); // NOI18N
+        italicBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                italicBtnMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                italicBtnMouseEntered(evt);
+            }
+        });
 
         jLabel13.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/10.png"))); // NOI18N
 
@@ -167,10 +216,12 @@ public class editortexto extends javax.swing.JFrame {
 
         jLabel15.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/11.png"))); // NOI18N
 
-        jTextArea1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        textEditor.setBackground(new java.awt.Color(255, 255, 255));
+        textEditor.setColumns(20);
+        textEditor.setFont(new java.awt.Font("Calibri", 0, 12)); // NOI18N
+        textEditor.setForeground(new java.awt.Color(0, 0, 0));
+        textEditor.setRows(5);
+        jScrollPane1.setViewportView(textEditor);
 
         jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/i/12.png"))); // NOI18N
 
@@ -186,22 +237,16 @@ public class editortexto extends javax.swing.JFrame {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
+                        .addComponent(cutBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
+                        .addComponent(copyBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel7)
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel8)
+                        .addComponent(pasteBtn)
+                        .addGap(60, 60, 60)
+                        .addComponent(boldBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel9)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel12)
-                        .addGap(26, 26, 26)
+                        .addComponent(italicBtn)
+                        .addGap(48, 48, 48)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel13)
@@ -225,8 +270,8 @@ public class editortexto extends javax.swing.JFrame {
                                 .addComponent(jLabel3)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fontCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sizeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(choosecolor_button, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
@@ -237,19 +282,16 @@ public class editortexto extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel11)
+                    .addComponent(italicBtn)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel19)
                             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel6)
-                                .addComponent(jLabel7)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel9)
-                                .addComponent(jLabel10)
-                                .addComponent(jLabel12)
+                                .addComponent(copyBtn)
+                                .addComponent(cutBtn)
+                                .addComponent(pasteBtn)
+                                .addComponent(boldBtn)
                                 .addComponent(jLabel14)
                                 .addComponent(jLabel13)
                                 .addComponent(jLabel15)
@@ -258,18 +300,18 @@ public class editortexto extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fontCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(12, 12, 12)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(sizeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
                     .addComponent(choosecolor_button))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 530, 510));
@@ -294,8 +336,130 @@ public class editortexto extends javax.swing.JFrame {
 
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         // SALIR
-        this.setVisible(false);
+
+        try {
+            data.text = textEditor.getText();
+            this.setVisible(false);
+            Logica.saveFile(data.currentFile.getCanonicalPath(), data);
+            new menu().setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }//GEN-LAST:event_jLabel1MouseClicked
+
+    private void copyToClip(String text) {
+        Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection strse1 = new StringSelection(text);
+        clip.setContents(strse1, strse1);
+    }
+
+    private void cutBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cutBtnMouseClicked
+        // TODO add your handling code here:
+        System.out.println("CORTADO");
+        String selectedText = textEditor.getSelectedText();
+        String newText = textEditor.getText().replace(selectedText, "");
+        textEditor.setText(newText);
+        copyToClip(newText);
+    }//GEN-LAST:event_cutBtnMouseClicked
+
+    private void copyBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_copyBtnMouseClicked
+        // TODO add your handling code here:
+        copyToClip(textEditor.getSelectedText());
+    }//GEN-LAST:event_copyBtnMouseClicked
+
+    private void pasteBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pasteBtnMouseClicked
+        // TODO add your handling code here:
+
+        Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable t = clip.getContents(null);
+
+        try {
+
+            if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                String pasteText = (String) t.getTransferData(DataFlavor.stringFlavor);
+                textEditor.setText(textEditor.getText() + pasteText);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_pasteBtnMouseClicked
+
+    private void fontComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fontComboItemStateChanged
+        // TODO add your handling code here:
+        if (!enabled) {
+            return;
+        }
+        
+        int style = Font.PLAIN;
+        if (data.bold == true) {
+            style = Font.BOLD;
+            System.out.println("nueva fuente | bold");
+        }
+        if (data.italic == true) {
+            System.out.println("nueva fuente | italic");
+            style = Font.ITALIC;
+        }
+        
+        Font newFont = new Font((String) fontCombo.getSelectedItem(), style, data.fontSize);
+        textEditor.setFont(newFont);
+        
+        data.fontName = (String) fontCombo.getSelectedItem();
+    }//GEN-LAST:event_fontComboItemStateChanged
+
+    private void boldBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_boldBtnMouseClicked
+        // TODO add your handling code here:
+        if (data.bold == false) {
+            data.italic = false;
+            Font newFont = new Font(textEditor.getFont().getName(), Font.BOLD, data.fontSize);
+            data.bold = true;
+            textEditor.setFont(newFont);
+        } else {
+            data.bold = false;
+            Font newFont = new Font(textEditor.getFont().getName(), Font.PLAIN, data.fontSize);
+            textEditor.setFont(newFont);
+        }
+    }//GEN-LAST:event_boldBtnMouseClicked
+
+    private void italicBtnMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_italicBtnMouseEntered
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_italicBtnMouseEntered
+
+    private void italicBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_italicBtnMouseClicked
+        // TODO add your handling code here:
+        if (data.italic == false) {
+            data.bold = false;
+            Font newFont = new Font(textEditor.getFont().getName(), Font.ITALIC, data.fontSize);
+            data.italic = true;
+            textEditor.setFont(newFont);
+        } else {
+            data.italic = false;
+            Font newFont = new Font(textEditor.getFont().getName(), Font.PLAIN, data.fontSize);
+            textEditor.setFont(newFont);
+        }
+    }//GEN-LAST:event_italicBtnMouseClicked
+
+    private void sizeComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_sizeComboItemStateChanged
+        // TODO add your handling code here:
+        int newSize = Integer.parseInt((String) sizeCombo.getSelectedItem());
+
+        int style = Font.PLAIN;
+        if (data.bold == true) {
+            style = Font.BOLD;
+            System.out.println("nueva size | bold");
+        }
+        if (data.italic == true) {
+            System.out.println("nueva size | italic");
+            style = Font.ITALIC;
+        }
+
+        Font f = textEditor.getFont();
+        Font newFont = new Font(f.getName(), style, newSize);
+        textEditor.setFont(newFont);
+        data.fontSize = newSize;
+
+    }//GEN-LAST:event_sizeComboItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -327,19 +491,19 @@ public class editortexto extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new editortexto().setVisible(true);
+                new editortexto(null).setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel boldBtn;
     private javax.swing.JButton choosecolor_button;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JLabel copyBtn;
+    private javax.swing.JLabel cutBtn;
+    private javax.swing.JComboBox<String> fontCombo;
+    private javax.swing.JLabel italicBtn;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -347,19 +511,16 @@ public class editortexto extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JLabel pasteBtn;
+    private javax.swing.JComboBox<String> sizeCombo;
+    private javax.swing.JTextArea textEditor;
     // End of variables declaration//GEN-END:variables
 }

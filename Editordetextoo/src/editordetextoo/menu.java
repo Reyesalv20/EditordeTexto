@@ -4,6 +4,14 @@
  */
 package editordetextoo;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author ruthreyes
@@ -30,7 +38,7 @@ public class menu extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        crearBtn = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -80,9 +88,19 @@ public class menu extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jButton1.setText("Crear Archivo");
+        crearBtn.setText("Crear Archivo");
+        crearBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                crearBtnActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Abrir Archivo");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -93,7 +111,7 @@ public class menu extends javax.swing.JFrame {
                 .addContainerGap(98, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(crearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(90, 90, 90))
         );
         jPanel1Layout.setVerticalGroup(
@@ -101,7 +119,7 @@ public class menu extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(crearBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 78, Short.MAX_VALUE))
@@ -124,9 +142,73 @@ public class menu extends javax.swing.JFrame {
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         // 
         this.setVisible(false);
-        
-        
+
+
     }//GEN-LAST:event_jLabel1MouseClicked
+
+    private void crearBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearBtnActionPerformed
+
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivo de Texto (.txt)", "TXT");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(filter);
+        fileChooser.showSaveDialog(fileChooser);
+        System.out.println(fileChooser.getSelectedFile());
+
+        try {
+
+            File archivoCreado = fileChooser.getSelectedFile();
+            if (archivoCreado == null) {
+                return;
+            }
+
+            if (!archivoCreado.getName().endsWith(".txt")) {
+                archivoCreado = new File(archivoCreado.getCanonicalFile() + ".txt");
+            }
+
+            if (archivoCreado.exists()) {
+                int op = JOptionPane.showConfirmDialog(null, archivoCreado.getName() + " ya existe. Desea reemplazarlo?");
+                if (op != 0) {
+                    crearBtnActionPerformed(null);
+                    return;
+                }
+            }
+
+            archivoCreado.delete();
+            FileMetadata data = Logica.createTextFile(archivoCreado.getCanonicalPath());
+            new editortexto(data).setVisible(true);
+            dispose();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_crearBtnActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+
+        try {
+            
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Archivo de Texto (.txt)", "TXT");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(filter);
+        fileChooser.showOpenDialog(this);
+
+        File archivoCreado = fileChooser.getSelectedFile();
+        if (archivoCreado == null) {
+            return;
+        }
+
+        if (!archivoCreado.getName().endsWith(".txt")) {
+            archivoCreado = new File(archivoCreado.getCanonicalFile() + ".txt");
+        }
+        
+        FileMetadata data = Logica.loadTextDataFromFile(archivoCreado.getCanonicalPath());
+        new editortexto(data).setVisible(true);
+        dispose();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -142,16 +224,24 @@ public class menu extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(menu.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -164,7 +254,7 @@ public class menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton crearBtn;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

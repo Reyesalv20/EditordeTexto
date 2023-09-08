@@ -29,7 +29,7 @@ public class Logica {
     EOF
      */
     
-    static void createTextFile(String path) {
+    static FileMetadata createTextFile(String path) {
         //crea el directorio en caso de que no exista, y si exista, va de un solo al try catch
         File file = new File(path);
         try {
@@ -49,15 +49,46 @@ public class Logica {
             raf.writeUTF("");;
             raf.close();
 
+            return loadTextDataFromFile(path);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+    
+    public static void saveFile(String path, FileMetadata data) {
+        try {
+            
+            File f = new File(path);
+            f.delete();
+            System.out.println("Guardando data en " + path);
+            RandomAccessFile raf = new RandomAccessFile(path, "rw");
+            raf.writeInt(data.hAllign);
+            raf.writeInt(data.vAllign);
+            raf.writeUTF(data.fontName);
+            raf.writeInt(data.fontR);
+            raf.writeInt(data.fontG);
+            raf.writeInt(data.fontB);
+            raf.writeBoolean(data.bold);
+            raf.writeBoolean(data.italic);
+            raf.writeUTF(data.text);
+            raf.close();
+            
+            System.out.println("Guardado en " + path);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 
     static FileMetadata loadTextDataFromFile(String path) throws IOException {
         //el puntero se posiciona en la posicion 0
+        System.out.println(path);
         try {
             RandomAccessFile raf = new RandomAccessFile(path, "rw");
+            raf.seek(0);
             // Skipear allings
             int hAllign = raf.readInt();
             int vAlling= raf.readInt();
@@ -74,7 +105,7 @@ public class Logica {
             FileMetadata fileData = new FileMetadata(hAllign, vAlling, fontName, fontR, fontG, fontB, fontSize, bold, italic, text, currentFile);
             return fileData;
         } catch (IOException e) {
-            System.out.println("no se pudieron cargar los archivos");
+            e.printStackTrace();
         }
         return null;
     }
